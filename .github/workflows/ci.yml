@@ -1,0 +1,48 @@
+name: ci
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+
+jobs:
+  cross:
+    runs-on: ubuntu-latest
+    env:
+      BIN_OUT: ./bin
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Build
+        uses: docker/bake-action@v2
+        with:
+          targets: cross
+      -
+        name: List artifacts
+        run: |
+          tree -nh ${{ env.BIN_OUT }}
+      -
+        name: Check artifacts
+        run: |
+          find ${{ env.BIN_OUT }} -type f -exec file -e ascii -- {} +
+      -
+        name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: buildx
+          path: .${{ env.BIN_OUT }}/*
+          if-no-files-found: error
+          retention-days: 1
