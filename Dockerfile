@@ -5,7 +5,7 @@ ARG XX_VERSION=1.1.2
 
 # xx is a helper for cross-compilation
 #FROM --platform=$BUILDPLATFORM tonistiigi/xx:${XX_VERSION} AS xx
-FROM --platform=$BUILDPLATFORM crazymax/xx:rust AS xx
+FROM --platform=$BUILDPLATFORM crazymax/xx:rust-rebased AS xx
 
 FROM --platform=$BUILDPLATFORM rust:${RUST_VERSION}-alpine as base
 RUN apk add clang lld musl-dev gcc git file
@@ -44,7 +44,7 @@ RUN --mount=type=bind,target=.,rw \
   mkdir -p /out
   xx-cargo build --release --target-dir /build/app
   cp /build/app/$(xx-cargo --print-target)/release/rust-docker-cross /out/
-  xx-verify /out/rust-docker-cross
+  xx-verify --static /out/rust-docker-cross
 EOT
 
 FROM scratch AS binary
