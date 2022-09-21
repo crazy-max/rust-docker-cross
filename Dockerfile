@@ -39,9 +39,8 @@ RUN --mount=type=bind,target=.,rw \
     --mount=type=cache,target=/usr/local/cargo/git/db \
     --mount=type=cache,target=/usr/local/cargo/registry/cache \
     --mount=type=cache,target=/usr/local/cargo/registry/index \
-    --mount=type=cache,target=/build/app,sharing=private <<EOT
+    --mount=type=cache,target=/build/app,id=$TARGETPLATFORM <<EOT
   set -ex
-  # foo
   mkdir -p /out
   xx-cargo build --release --target-dir /build/app
   cp /build/app/$(xx-cargo --print-target)/release/rust-docker-cross /out/
