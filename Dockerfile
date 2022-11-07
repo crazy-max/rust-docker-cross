@@ -1,11 +1,9 @@
 # syntax=docker/dockerfile:1
 
 ARG RUST_VERSION=1.63.0
-ARG XX_VERSION=1.1.2
 
 # xx is a helper for cross-compilation
-#FROM --platform=$BUILDPLATFORM tonistiigi/xx:${XX_VERSION} AS xx
-FROM --platform=$BUILDPLATFORM crazymax/xx:rust-rebased AS xx
+FROM --platform=$BUILDPLATFORM tonistiigi/xx:master@sha256:f9bd372659c853bdf105315287c65318a0c1a48795022ad3b42c5f2bc3735759 AS xx
 
 FROM --platform=$BUILDPLATFORM rust:${RUST_VERSION}-alpine as base
 RUN apk add clang lld musl-dev gcc git file
